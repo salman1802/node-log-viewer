@@ -151,9 +151,12 @@ class LogInterceptor extends EventEmitter {
     this.emit('clear');
   }
 
-  getLogs({ level, search, since, limit = 500, offset = 0 } = {}) {
+  getLogs({ level, search, since, sinceId, limit = 500, offset = 0 } = {}) {
     let filtered = this.logs;
 
+    if (sinceId) {
+      filtered = filtered.filter(l => l.id > sinceId);
+    }
     if (level && level !== 'all') {
       filtered = filtered.filter(l => l.level === level);
     }
@@ -171,8 +174,12 @@ class LogInterceptor extends EventEmitter {
     return { total, items };
   }
 
-  getRequests({ limit = 100 } = {}) {
-    return this.requests.slice(-limit);
+  getRequests({ limit = 100, sinceId } = {}) {
+    let result = this.requests;
+    if (sinceId) {
+      result = result.filter(r => r.id > sinceId);
+    }
+    return result.slice(-limit);
   }
 
   _getCallSite() {

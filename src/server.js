@@ -15,23 +15,25 @@ function createMiddleware(interceptor, options = {}) {
   // Serve static assets
   router.use(express.static(path.join(__dirname, 'public')));
 
-  // API: get logs
+  // API: get logs (supports since_id for polling)
   router.get('/api/logs', (req, res) => {
-    const { level, search, limit, offset } = req.query;
+    const { level, search, limit, offset, since_id } = req.query;
     const result = interceptor.getLogs({
       level,
       search,
       limit: limit ? parseInt(limit) : undefined,
       offset: offset ? parseInt(offset) : undefined,
+      sinceId: since_id ? parseInt(since_id) : undefined,
     });
     res.json(result);
   });
 
-  // API: get requests
+  // API: get requests (supports since_id for polling)
   router.get('/api/requests', (req, res) => {
-    const { limit } = req.query;
+    const { limit, since_id } = req.query;
     const requests = interceptor.getRequests({
       limit: limit ? parseInt(limit) : undefined,
+      sinceId: since_id ? parseInt(since_id) : undefined,
     });
     res.json(requests);
   });

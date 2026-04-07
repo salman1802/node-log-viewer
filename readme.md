@@ -109,6 +109,7 @@ console.debug('Query took 42ms');
 - **Non-invasive** — logs still appear in your terminal as usual
 - **Dark / Light theme** — toggle with `T` key, persists across sessions
 - **Method filters** — filter requests by GET, POST, PUT, PATCH, DELETE
+- **Polling fallback** — auto-switches to HTTP polling every 5s if WebSocket disconnects (proxy, firewall, etc.)
 - **Production safe** — disable entirely with an environment variable
 
 ## Disable in Production

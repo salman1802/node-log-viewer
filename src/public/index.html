@@ -889,11 +889,73 @@
       }
     }
 
+    /* ── Polling fallback ── */
+    let pollTimer = null;
+    let wsConnected = false;
+
+    function getLastLogId() {
+      return logs.length ? logs[logs.length - 1].id : 0;
+    }
+
+    function getLastReqId() {
+      return requests.length ? requests[requests.length - 1].id : 0;
+    }
+
+    async function poll() {
+      if (wsConnected) return;
+      try {
+        const logRes = await fetch(`${BASE}/api/logs?since_id=${getLastLogId()}&limit=500`);
+        const logData = await logRes.json();
+        if (logData.items && logData.items.length) {
+          for (const log of logData.items) {
+            if (!logs.find(l => l.id === log.id)) {
+              if (paused) { pauseBuffer.push({ type: 'log', log }); }
+              else { appendLog(log); }
+            }
+          }
+        }
+
+        const reqRes = await fetch(`${BASE}/api/requests?since_id=${getLastReqId()}&limit=100`);
+        const reqData = await reqRes.json();
+        if (reqData && reqData.length) {
+          for (const req of reqData) {
+            if (!requests.find(r => r.id === req.id)) {
+              if (paused) { pauseBuffer.push({ type: 'request', request: req }); }
+              else { appendRequest(req); }
+            }
+          }
+        }
+      } catch {}
+    }
+
+    function startPolling() {
+      stopPolling();
+      pollTimer = setInterval(poll, 5000);
+      poll(); // fetch immediately on start
+    }
+
+    function stopPolling() {
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    /* ── WebSocket ── */
     function connect() {
       const proto = location.protocol==='https:'?'wss:':'ws:';
       ws = new WebSocket(`${proto}//${location.host}${BASE}/ws`);
-      ws.onopen = () => { connBadge.className='conn-badge connected'; connBadge.querySelector('span').textContent='Live'; startTime=Date.now(); };
-      ws.onclose = () => { connBadge.className='conn-badge disconnected'; connBadge.querySelector('span').textContent='Reconnecting...'; setTimeout(connect,2000); };
+      ws.onopen = () => {
+        wsConnected = true;
+        stopPolling();
+        connBadge.className='conn-badge connected';
+        connBadge.querySelector('span').textContent='Live';
+        startTime=Date.now();
+      };
+      ws.onclose = () => {
+        wsConnected = false;
+        connBadge.className='conn-badge disconnected';
+        connBadge.querySelector('span').textContent='Polling...';
+        startPolling();
+        setTimeout(connect, 5000);
+      };
       ws.onerror = () => ws.close();
       ws.onmessage = event => {
         const data = JSON.parse(event.data);

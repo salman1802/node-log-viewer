@@ -1,6 +1,6 @@
 {
   "name": "console-log-viewer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Drop-in graphical log viewer for Node.js — intercepts console logs and displays them in a filterable web dashboard",
   "main": "src/index.js",
   "scripts": {
