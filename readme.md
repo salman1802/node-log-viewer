@@ -5,7 +5,7 @@ Drop-in graphical log viewer for Node.js. Intercepts `console.log`, `console.war
 ## Install
 
 ```bash
-npm install @salman/log-viewer
+npm install salman-log-viewer
 ```
 
 ## Quick Start
@@ -14,7 +14,7 @@ npm install @salman/log-viewer
 
 ```js
 const express = require('express');
-const logViewer = require('@salman/log-viewer');
+const logViewer = require('salman-log-viewer');
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.listen(3000);
 
 ```js
 import express from 'express';
-import logViewer from '@salman/log-viewer';
+import logViewer from 'salman-log-viewer';
 
 const app = express();
 
@@ -59,7 +59,7 @@ When you enable `logViewer.requestLogger()`, every HTTP request is tracked and l
 Click any request to open the detail panel and see everything at a glance.
 
 ```js
-const logViewer = require('@salman/log-viewer');
+const logViewer = require('salman-log-viewer');
 
 // Must be added BEFORE your routes
 app.use(logViewer.requestLogger());
