@@ -1,0 +1,25 @@
+{
+  "name": "@salman/log-viewer",
+  "version": "1.0.0",
+  "description": "Drop-in graphical log viewer for Node.js — intercepts console logs and displays them in a filterable web dashboard",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "keywords": [
+    "log",
+    "viewer",
+    "console",
+    "debug",
+    "dashboard",
+    "logging",
+    "monitor"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "ws": "^8.16.0"
+  },
+  "peerDependencies": {
+    "express": "^4.0.0 || ^5.0.0"
+  }
+}
